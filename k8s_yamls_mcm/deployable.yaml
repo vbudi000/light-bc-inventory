@@ -20,7 +20,7 @@ spec:
         spec:
           containers:
             - name: catalog
-              image: bluemixenablement/lightbluecompute-catalog:latest
+              image: __IMAGE__
               imagePullPolicy: Always
               livenessProbe:
                 tcpSocket:
