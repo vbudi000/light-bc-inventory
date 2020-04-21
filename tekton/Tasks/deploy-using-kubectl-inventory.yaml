@@ -36,3 +36,4 @@ spec:
         - "apply"
         - "-f"
         - "/workspace/git-source-inventory/$(inputs.params.pathToYamlFile)"
+        - "/workspace/git-source-inventory/$(inputs.params.pathToDeployableFile)"
