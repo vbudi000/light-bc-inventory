@@ -10,6 +10,7 @@ spec:
     kind: PipelineRun
     metadata:
       name: bluecompute-inventory-pr
+      namespace: light-bc
     spec:
       pipelineRef:
         name: bluecompute-build-and-deploy-pipeline-inventory
