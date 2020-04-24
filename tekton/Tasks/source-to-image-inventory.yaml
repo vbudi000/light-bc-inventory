@@ -11,8 +11,8 @@ spec:
         type: image
     params:
       - name: BUILDER_IMAGE
-        description: The location of the buildah builder image.
-        default: "quay.io/buildah/stable:v1.12.0"
+        description: The location of the kaniko image.
+        default: "quay.io/buildah/stable:v1.14.0"
       - name: DOCKERFILE
         description: Path to the Dockerfile to build.
         default: Dockerfile
@@ -41,8 +41,10 @@ spec:
         echo "SHORT_GIT_HASH = $SHORT_GIT_HASH"
         echo "Building Image $NEW_IMAGE_ID"
         buildah bud --tls-verify="$(inputs.params.TLSVERIFY)" --storage-driver=vfs --layers -f "$(inputs.params.DOCKERFILE)" -t "$NEW_IMAGE_ID" "$(inputs.params.CONTEXT)"
+        echo "Display image"
+        buildah images -a
         echo "Pushing Image $NEW_IMAGE_ID"
-        buildah push --tls-verify="$(inputs.params.TLSVERIFY)" "$NEW_IMAGE_ID" "docker://$NEW_IMAGE_ID"
+        buildah push --storage-driver=vfs --tls-verify="$(inputs.params.TLSVERIFY)" "$NEW_IMAGE_ID" "docker://$NEW_IMAGE_ID"
         echo "NEW_IMAGE_ID=$NEW_IMAGE_ID" >> /workspace/env-config
     securityContext:
       privileged: true
@@ -51,6 +53,4 @@ spec:
         mountPath: /var/lib/containers
   volumes:
     - name: varlibcontainers
-      emptyDir: {}
-    - name: m2-repository
       emptyDir: {}
