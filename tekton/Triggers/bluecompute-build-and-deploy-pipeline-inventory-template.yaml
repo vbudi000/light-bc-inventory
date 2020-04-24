@@ -9,7 +9,7 @@ spec:
   - apiVersion: tekton.dev/v1alpha1
     kind: PipelineRun
     metadata:
-      name: bluecompute-inventory-pr
+      generateName: bluecompute-inventory-pr-
       namespace: light-bc
     spec:
       pipelineRef:
