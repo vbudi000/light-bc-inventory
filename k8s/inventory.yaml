@@ -45,3 +45,17 @@ spec:
   ports:
    - port: 8081
      targetPort: 8081
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  labels:
+    app: inventory-api
+  name: inventory-api
+spec:
+  port:
+    targetPort: 8081-tcp
+  to:
+    kind: Service
+    name: inventory-lightblue-service
+    weight: 100
