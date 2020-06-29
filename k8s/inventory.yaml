@@ -15,8 +15,8 @@ spec:
         app: inventory
     spec:
       containers:
-      - name: inventory
-        image: "rocketronald/lightbluecompute-catalog:latest"
+      - name: inventory-lightblue-deployment
+        image: index.docker.io/rocketronald/lightbluecompute-catalog
         imagePullPolicy: Always
         livenessProbe:
           tcpSocket:
