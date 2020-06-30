@@ -19,7 +19,7 @@ public class VcapProcessor implements ApplicationContextInitializer<Configurable
         PropertySource<?> yamlTestProperties = sourceLoader.load("yamlTestProperties", resource, null);
         applicationContext.getEnvironment().getPropertySources().addFirst(yamlTestProperties);
         String vcapURI = applicationContext.getEnvironment().getProperty("vcap.uri");
-        System.out.println("TEST: "+vcapURI);
+        System.out.println("vcap.uri from application.yml: "+vcapURI);
         if (vcapURI.startsWith("mysql")) {
             int ustart = vcapURI.indexOf("://")+3;
             String username = vcapURI.substring(ustart,vcapURI.indexOf(":",ustart));
@@ -31,7 +31,10 @@ public class VcapProcessor implements ApplicationContextInitializer<Configurable
             PropertySource<?> newDataSource = sourceLoader.load("newDataSource",bar,null);
             applicationContext.getEnvironment().getPropertySources().addFirst(newDataSource);
             System.out.println("****: "+applicationContext.getEnvironment().getProperty("spring.datasource.url"));
-        }
+        } else {
+            String lURL = applicationContext.getEnvironment().getProperty("spring.datasource.url");
+            System.out.println("spring.datasource.url from application.yml: "+lURL);          
+        }  
     } catch (IOException e) {
         throw new RuntimeException(e);
     }
