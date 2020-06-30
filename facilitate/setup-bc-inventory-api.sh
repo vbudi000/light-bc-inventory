@@ -36,7 +36,7 @@ do
             ;;
         "run pipeline")
             echo "run pipeline in namespace ${BC_PROJECT}"
-            tkn pipeline start build-and-deploy -r git-repo=git-source-inventory -r image=docker-image-inventory -p deployment-name=inventory-lightblue-deployment
+            tkn pipeline start build-and-deploy -r git-repo=git-source-inventory -r image=docker-image-inventory -p deployment-name=catalog-lightblue-deployment
             break
             ;;
         "setup triggers")
