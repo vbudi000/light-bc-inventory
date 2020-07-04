@@ -22,9 +22,12 @@ do
             tkn resources list
 
             #2 - setup tekton tasks to interact with OpenShift
+            # credits: https://github.com/openshift/pipelines-tutorial/
+            # licensed under Apache 2.0
             echo "************************ setup Tekton Tasks for OCP ******************************************"
-            oc apply -f https://raw.githubusercontent.com/openshift/pipelines-tutorial/release-tech-preview-1/01_pipeline/01_apply_manifest_task.yaml
-            oc apply -f https://raw.githubusercontent.com/openshift/pipelines-tutorial/release-tech-preview-1/01_pipeline/02_update_deployment_task.yaml
+            oc apply -f 01_apply_manifest_task.yaml
+            oc apply -f 02_update_deployment_task.yaml
+            oc apply -f 03_restart_deployment_task.yaml
             tkn task list
 
             #3 - setup tekton pipeline 
