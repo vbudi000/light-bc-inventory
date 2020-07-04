@@ -48,3 +48,12 @@ spec:
       value: $(params.deployment-name)
     runAfter:
     - apply-manifests
+  - name: restart-deployment
+    taskRef:
+      name: restart-deployment
+    resources:
+    params:
+    - name: deployment
+      value: $(params.deployment-name)
+    runAfter:
+    - update-deployment
