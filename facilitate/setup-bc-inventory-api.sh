@@ -27,7 +27,7 @@ do
             #2 - setup tekton tasks to interact with OpenShift
             # credits: https://github.com/openshift/pipelines-tutorial/
             # licensed under Apache 2.0
-            echo "************************ setup Tekton Tasks for OCP ******************************************"
+            echo "************************ setup Tekton Tasks for interacting with OpenShift ******************************************"
             oc apply -f 01_apply_manifest_task.yaml
             oc apply -f 02_update_deployment_task.yaml
             oc apply -f 03_restart_deployment_task.yaml
