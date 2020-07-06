@@ -4,6 +4,9 @@ echo "working on project ${BC_PROJECT}"
 oc project ${BC_PROJECT}
 oc status
 
+echo "Typically you will setup the Tekton pipeline first as a one time activity. Next, you will run it."
+echo "Setting up the triggers is optional."
+
 PS3='Please enter your choice: '
 options=("setup pipeline" "run pipeline" "setup triggers" "Quit")
 select opt in "${options[@]}"
