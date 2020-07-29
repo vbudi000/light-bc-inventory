@@ -32,6 +32,7 @@ do
             oc apply -f 01_apply_manifest_task.yaml
             oc apply -f 02_update_deployment_task.yaml
             oc apply -f 03_restart_deployment_task.yaml
+            oc apply -f 04_build_vfs_storage.yaml
             tkn task list
 
             #3 - setup tekton pipeline 
