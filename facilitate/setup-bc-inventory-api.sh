@@ -36,7 +36,8 @@ do
 
             #3 - setup tekton pipeline 
             echo "************************ setup Tekton Pipeline ******************************************"
-            oc apply -f pipeline.yaml
+            #oc apply -f pipeline.yaml
+            oc apply -f pipeline-vfs.yaml
             tkn pipeline list
 
             break
