@@ -1,15 +1,18 @@
 #!/bin/sh
 
+clear
 echo "working on project ${BC_PROJECT}"
+echo "----------------------------------------------------------------------------------------------" 
 oc project ${BC_PROJECT}
-oc status
+oc status  --suggest
 
+echo "----------------------------------------------------------------------------------------------" 
+echo "Welcome"
 echo "Typically you will setup the Tekton pipeline first as a one time activity."
 echo "Next, you can run the pipeline as many times as you like."
-echo "Setting up the triggers is optional. Triggers are used by webhooks from git to deploy code changes automatically."
 
 PS3='Please enter your choice: '
-options=("setup pipeline" "run pipeline" "setup triggers" "add sonar scan to pipeline" "Quit")
+options=("setup pipeline" "run pipeline" "add sonar scan to pipeline" "Quit")
 select opt in "${options[@]}"
 do
     case $opt in
