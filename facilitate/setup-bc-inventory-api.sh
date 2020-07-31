@@ -9,7 +9,7 @@ echo "Next, you can run the pipeline as many times as you like."
 echo "Setting up the triggers is optional. Triggers are used by webhooks from git to deploy code changes automatically."
 
 PS3='Please enter your choice: '
-options=("setup pipeline" "run pipeline" "setup triggers" "Quit")
+options=("setup pipeline" "run pipeline" "setup triggers" "add sonar scan to pipeline" "Quit")
 select opt in "${options[@]}"
 do
     case $opt in
@@ -19,9 +19,11 @@ do
 
             #1 setup tekton resources
             echo "************************ setup Tekton PipelineResources ******************************************"
-            sed -i "s/ibmcase/${DOCKER_USERNAME}/g" ../tekton/PipelineResources/bluecompute-inventory-pipeline-resources.yaml
-            sed -i "s/phemankita/${GIT_USERNAME}/g" ../tekton/PipelineResources/bluecompute-inventory-pipeline-resources.yaml
-            oc apply -f ../tekton/PipelineResources/bluecompute-inventory-pipeline-resources.yaml
+            cp ../tekton/PipelineResources/bluecompute-inventory-pipeline-resources.yaml ../tekton/PipelineResources/bluecompute-inventory-pipeline-resources.yaml.mod
+            sed -i "s/ibmcase/${DOCKER_USERNAME}/g" ../tekton/PipelineResources/bluecompute-inventory-pipeline-resources.yaml.mod
+            sed -i "s/phemankita/${GIT_USERNAME}/g" ../tekton/PipelineResources/bluecompute-inventory-pipeline-resources.yaml.mod
+            oc apply -f ../tekton/PipelineResources/bluecompute-inventory-pipeline-resources.yaml.mod
+            rm ../tekton/PipelineResources/bluecompute-inventory-pipeline-resources.yaml.mod
             #oc get PipelineResources
             tkn resources list
 
@@ -45,13 +47,19 @@ do
             ;;
         "run pipeline")
             echo "run pipeline in namespace ${BC_PROJECT}"
-            tkn pipeline start build-and-deploy -r git-repo=git-source-inventory -r image=docker-image-inventory -p deployment-name=catalog-lightblue-deployment
+            tkn pipeline start build-and-deploy-java -r git-repo=git-source-inventory -r image=docker-image-inventory -p deployment-name=catalog-lightblue-deployment
             break
             ;;
         "setup triggers")
             echo "setup triggers in namespace ${BC_PROJECT}"
             break
             ;;
+        "add sonar scan to pipeline")
+            echo "updating pipeline to perform a sonar qube scan"
+            oc apply -f pipeline-vfs-sonar.yaml
+            tkn pipeline list
+            break
+            ;;     
         "Quit")
             break
             ;;
