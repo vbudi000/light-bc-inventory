@@ -8,7 +8,7 @@ spec:
     inputs:
       - {type: git, name: source}
   params:
-    - default: 'maven:3.6.3-openjdk-8'
+    - default: 'maven:3.6.3-openjdk-11'
       name: sonarqube-image
       type: string
   steps:
