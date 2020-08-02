@@ -13,6 +13,14 @@ spec:
     type: string
     description: name of the deployment to be patched
   tasks:
+  - name: java-sonarqube-task
+    taskRef: 
+      name: java-sonarqube-task
+      kind: Task
+    resources:
+      inputs:
+      - name: source
+        resource: git-repo
   - name: build-image
     taskRef:
       name: buildah-vfs-storage-driver
@@ -27,6 +35,8 @@ spec:
     params:
     - name: TLSVERIFY
       value: "false"
+    runAfter:
+    - java-sonarqube-task
   - name: apply-manifests
     taskRef:
       name: apply-manifests

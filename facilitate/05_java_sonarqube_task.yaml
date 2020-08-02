@@ -30,19 +30,19 @@ spec:
           valueFrom:
             configMapKeyRef:
               key: SONARQUBE_URL
-              name: sonarqube-config
+              name: sonarqube-config-java
               optional: true
         - name: SONARQUBE_PROJECT
           valueFrom:
             secretKeyRef:
               key: SONARQUBE_PROJECT
-              name: sonarqube-access
+              name: sonarqube-access-java
               optional: true
         - name: SONARQUBE_LOGIN
           valueFrom:
             secretKeyRef:
               key: SONARQUBE_LOGIN
-              name: sonarqube-access
+              name: sonarqube-access-java
               optional: true
       image: $(inputs.params.sonarqube-image)
       name: sonarqube
