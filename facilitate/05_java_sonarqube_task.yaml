@@ -8,7 +8,7 @@ spec:
     inputs:
       - {type: git, name: source}
   params:
-    - default: 'sonarsource/sonar-scanner-cli:4.4'
+    - default: 'maven:3.6.3-openjdk-8'
       name: sonarqube-image
       type: string
   steps:
@@ -18,8 +18,20 @@ spec:
           set -e
           if [ -n "${SONARQUBE_URL}" ]; then
               echo "workdir: $(pwd)" 
-              echo "list: $(ls)" 
-              /opt/sonar-scanner/bin/sonar-scanner -Dsonar.projectKey=${SONARQUBE_PROJECT} -Dsonar.sources=. -Dsonar.host.url=${SONARQUBE_URL} -Dsonar.login=${SONARQUBE_LOGIN}
+              java -version
+              curl -L https://services.gradle.org/distributions/gradle-2.3-bin.zip -o gradle-2.3-bin.zip 
+              jar -xvf gradle-2.3-bin.zip > /dev/null
+              export PATH=$PATH:/workspace/source/gradle-2.3/bin
+              echo "PATH=$PATH"
+              chmod u+x /workspace/source/gradle-2.3/bin/gradle
+              gradle -v
+              echo "list: $(ls | grep gradle)" 
+              export CLASSPATH=$CLASSPATH:/workspace/source/gradle-2.3/lib/*
+              cp /workspace/source/gradle/wrapper/gradle-wrapper.properties \
+                 /workspace/source/gradle-2.3/lib/gradle-wrapper-2.3.properties
+
+              chmod u+x ./gradlew
+              ./gradlew sonarqube -Dsonar.projectKey=${SONARQUBE_PROJECT} -Dsonar.sources=src/main -Dsonar.host.url=${SONARQUBE_URL} -Dsonar.login=${SONARQUBE_LOGIN}
           else 
               echo "Skipping Sonar Qube step because sonarqube url has not been configured"
           fi
@@ -52,7 +64,7 @@ spec:
       volumeMounts:
         - mountPath: .m2/repository
           name: m2-repository
-      workingDir: /workspace/source/src
+      workingDir: /workspace/source
   volumes:
     - emptyDir: {}
       name: m2-repository
