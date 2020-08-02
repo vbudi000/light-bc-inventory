@@ -28,7 +28,7 @@ spec:
               echo "list: $(ls | grep gradle)" 
               export CLASSPATH=$CLASSPATH:/workspace/source/gradle-6.5.1/lib/*
               cp /workspace/source/gradle/wrapper/gradle-wrapper.properties \
-                 /workspace/source/gradle-2.3/lib/gradle-wrapper-6.5.1.properties
+                 /workspace/source/gradle-6.5.1/lib/gradle-wrapper-6.5.1.properties
 
               chmod u+x ./gradlew
               ./gradlew sonarqube -Dsonar.projectKey=${SONARQUBE_PROJECT} -Dsonar.sources=src/main -Dsonar.host.url=${SONARQUBE_URL} -Dsonar.login=${SONARQUBE_LOGIN}
