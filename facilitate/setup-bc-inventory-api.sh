@@ -58,11 +58,27 @@ do
             break
             ;;
         "add sonar scan to pipeline")
+
             echo "updating pipeline to perform a sonar qube scan"
+            oc apply -f 05_java_sonarqube_task.yaml
+            tkn task list
+
             oc apply -f pipeline-vfs-sonar.yaml
             tkn pipeline list
+
+            echo "using SONARQUBE_URL=${SONARQUBE_URL}"
+            oc delete configmap sonarqube-config-java 2>/dev/null
+            oc create configmap sonarqube-config-java \
+              --from-literal SONARQUBE_URL=${SONARQUBE_URL}
+            
+            # TODO: make project name configurable             
+            oc delete secret sonarqube-access-java 2>/dev/null
+            oc create secret generic sonarqube-access-java \
+              --from-literal SONARQUBE_PROJECT=${SONARQUBE_PROJECT} \
+              --from-literal SONARQUBE_LOGIN=${SONARQUBE_LOGIN} 
+
             break
-            ;;     
+            ;;
         "Quit")
             break
             ;;
