@@ -8,6 +8,10 @@ buildscript {
     }
 }
 
+plugins {
+  id "org.sonarqube" version "2.7"
+}
+
 apply plugin: 'java'
 apply plugin: 'eclipse'
 apply plugin: 'idea'
@@ -72,10 +76,6 @@ task docker {
     }
 }
 
-task wrapper(type: Wrapper) {
+k wrapper(type: Wrapper) {
     gradleVersion = '2.3'
-}
-
-plugins {
-  id "org.sonarqube" version "2.7"
 }
