@@ -76,6 +76,3 @@ task docker {
     }
 }
 
-wrapper(type: Wrapper) {
-    gradleVersion = '2.3'
-}

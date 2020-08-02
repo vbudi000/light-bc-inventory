@@ -19,16 +19,16 @@ spec:
           if [ -n "${SONARQUBE_URL}" ]; then
               echo "workdir: $(pwd)" 
               java -version
-              curl -L https://services.gradle.org/distributions/gradle-2.3-bin.zip -o gradle-2.3-bin.zip 
-              jar -xvf gradle-2.3-bin.zip > /dev/null
-              export PATH=$PATH:/workspace/source/gradle-2.3/bin
+              curl -L https://services.gradle.org/distributions/gradle-6.5.1-bin.zip -o gradle-6.5.1-bin.zip 
+              jar -xvf gradle-6.5.1-bin.zip > /dev/null
+              export PATH=$PATH:/workspace/source/gradle-6.5.1/bin
               echo "PATH=$PATH"
-              chmod u+x /workspace/source/gradle-2.3/bin/gradle
+              chmod u+x /workspace/source/gradle-6.5.1/bin/gradle
               gradle -v
               echo "list: $(ls | grep gradle)" 
-              export CLASSPATH=$CLASSPATH:/workspace/source/gradle-2.3/lib/*
+              export CLASSPATH=$CLASSPATH:/workspace/source/gradle-6.5.1/lib/*
               cp /workspace/source/gradle/wrapper/gradle-wrapper.properties \
-                 /workspace/source/gradle-2.3/lib/gradle-wrapper-2.3.properties
+                 /workspace/source/gradle-2.3/lib/gradle-wrapper-6.5.1.properties
 
               chmod u+x ./gradlew
               ./gradlew sonarqube -Dsonar.projectKey=${SONARQUBE_PROJECT} -Dsonar.sources=src/main -Dsonar.host.url=${SONARQUBE_URL} -Dsonar.login=${SONARQUBE_LOGIN}
