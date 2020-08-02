@@ -75,3 +75,7 @@ task docker {
 task wrapper(type: Wrapper) {
     gradleVersion = '2.3'
 }
+
+plugins {
+  id "org.sonarqube" version "2.7"
+}
