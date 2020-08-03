@@ -1,5 +1,7 @@
 # Docker Hub Section
-export DOCKER_USERNAME='docker user'
+export DOCKER_USERNAME='your docker-hub user here'
+export DOCKER_PASSWORD='your docker-hub password here'
+export DOCKER_EMAIL='your email here'
 
 # Git Section
 export GIT_USERNAME='git user'
