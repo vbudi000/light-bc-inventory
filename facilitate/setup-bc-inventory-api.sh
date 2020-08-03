@@ -12,11 +12,11 @@ echo "Typically you will setup the Tekton pipeline first as a one time activity.
 echo "Next, you can run the pipeline as many times as you like."
 
 PS3='Please enter your choice: '
-options=("setup pipeline" "run pipeline" "add sonar scan to pipeline" "Quit")
+options=("setup basic pipeline" "run pipeline" "add sonar scan to pipeline" "pipeline with push to ICR" "Quit")
 select opt in "${options[@]}"
 do
     case $opt in
-        "setup pipeline")
+        "setup basic pipeline")
 
             echo "setup pipeline in namespace ${BC_PROJECT}"
 
@@ -46,10 +46,24 @@ do
             oc apply -f pipeline-vfs.yaml
             tkn pipeline list
 
+            #4 - recreate access key
+            echo "************************ recreate access key to dockerhub ******************************************"
+            oc delete secret regcred 
+            oc create secret docker-registry regcred \
+            --docker-server=https://index.docker.io/v1/ \
+            --docker-username=${DOCKER_USERNAME} \
+            --docker-password=${DOCKER_PASSWORD} \
+            --docker-email=${DOCKER_EMAIL}
+            #oc get secret regcred
+
             break
             ;;
         "run pipeline")
-            echo "run pipeline in namespace ${BC_PROJECT}"
+
+            echo "************************ Run Tekton Pipeline ******************************************"
+            echo "run pipeline in namespace ${BC_PROJECT} using following configuration:"
+            tkn resource list | grep inventory
+
             tkn pipeline start build-and-deploy-java -r git-repo=git-source-inventory -r image=docker-image-inventory -p deployment-name=catalog-lightblue-deployment
             break
             ;;
@@ -79,6 +93,30 @@ do
 
             break
             ;;
+       "pipeline with push to ICR")
+
+            # Recreate access token to IBM Container Registry
+            oc delete secret regcred 
+            oc create secret docker-registry regcred \
+            --docker-server=https://${IBM_REGISTRY_URL}/v1/ \
+            --docker-username=iamapikey \
+            --docker-password=${IBM_ID_APIKEY} \
+            --docker-email=${IBM_ID_EMAIL}
+
+            # Update Tekton Resources to push 
+            cp ../tekton/PipelineResources/bluecompute-inventory-pipeline-resources.yaml ../tekton/PipelineResources/bluecompute-inventory-pipeline-resources.yaml.mod
+            sed -i "s/ibmcase/${IBM_REGISTRY_NS}/g" ../tekton/PipelineResources/bluecompute-inventory-pipeline-resources.yaml.mod
+            sed -i "s/index.docker.io/${IBM_REGISTRY_URL}/g" ../tekton/PipelineResources/bluecompute-inventory-pipeline-resources.yaml.mod
+            sed -i "s/phemankita/${GIT_USERNAME}/g" ../tekton/PipelineResources/bluecompute-inventory-pipeline-resources.yaml.mod
+            #cat ../tekton/PipelineResources/bluecompute-inventory-pipeline-resources.yaml
+            oc apply -f ../tekton/PipelineResources/bluecompute-inventory-pipeline-resources.yaml.mod
+            rm ../tekton/PipelineResources/bluecompute-inventory-pipeline-resources.yaml.mod
+
+            #oc get PipelineResources
+            tkn resources list
+
+            break
+            ;;            
         "Quit")
             break
             ;;
