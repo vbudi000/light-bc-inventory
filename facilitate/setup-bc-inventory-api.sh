@@ -56,6 +56,10 @@ do
             --docker-email=${DOCKER_EMAIL}
             #oc get secret regcred
 
+            # 6 - give the default service account the access keys to the registry 
+            echo " overwhelming the deployer with irrelevant information (hint: not a best practice)"
+            oc secrets link default regcred --for=pull
+
             break
             ;;
         "run pipeline")
@@ -114,6 +118,10 @@ do
 
             #oc get PipelineResources
             tkn resources list
+
+            echo "************************ setup Basic Tekton Pipeline ******************************************"
+            oc apply -f pipeline-vfs.yaml
+            tkn pipeline list
 
             break
             ;;            
