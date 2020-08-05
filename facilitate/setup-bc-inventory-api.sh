@@ -12,7 +12,7 @@ echo "Typically you will setup the Tekton pipeline first as a one time activity.
 echo "Next, you can run the pipeline as many times as you like."
 
 PS3='Please enter your choice: '
-options=("setup basic pipeline" "run pipeline" "add sonar scan to pipeline" "pipeline with push to ICR" "Quit")
+options=("setup basic pipeline" "run pipeline" "add sonar scan to pipeline" "setup pipeline with push to ICR" "run pipeline with push to ICR" "Quit")
 select opt in "${options[@]}"
 do
     case $opt in
@@ -97,7 +97,11 @@ do
 
             break
             ;;
-       "pipeline with push to ICR")
+       "setup pipeline with push to ICR")
+
+            echo "updating pipeline to perform a VA scan"
+            oc apply -f 06_VA_scan.yaml
+            #tkn task list
 
             # Recreate access token to IBM Container Registry
             oc delete secret regcred 
@@ -119,12 +123,34 @@ do
             #oc get PipelineResources
             tkn resources list
 
-            echo "************************ setup Basic Tekton Pipeline ******************************************"
-            oc apply -f pipeline-vfs.yaml
+            echo "************************ setup Tekton Pipeline with VA scan ******************************************"
+            oc apply -f pipeline-vfs-icr.yaml
             tkn pipeline list
+
+            oc delete secret ibmcloud-apikey 2>/dev/null
+            oc create secret generic ibmcloud-apikey --from-literal APIKEY=${IBM_ID_APIKEY}
+
+            oc delete configmap ibmcloud-config 2>/dev/null
+            oc create configmap ibmcloud-config \
+             --from-literal RESOURCE_GROUP=default \
+             --from-literal REGION=eu-de
 
             break
             ;;            
+        "run pipeline with push to ICR")
+
+            echo "************************ Run Tekton Pipeline ******************************************"
+            echo "run pipeline in namespace ${BC_PROJECT} using following configuration:"
+            tkn resource list | grep inventory
+
+            tkn pipeline start build-and-deploy-java \
+              -r git-repo=git-source-inventory \
+              -r image=docker-image-inventory \
+              -p deployment-name=catalog-lightblue-deployment \
+              -p image-url-name=${IBM_REGISTRY_URL}/${IBM_REGISTRY_NS}/lightbluecompute-catalog:latest \
+              -p scan-image-name=true
+            break
+            ;;
         "Quit")
             break
             ;;
