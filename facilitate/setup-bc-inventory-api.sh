@@ -38,6 +38,8 @@ do
             oc apply -f 02_update_deployment_task.yaml
             oc apply -f 03_restart_deployment_task.yaml
             oc apply -f 04_build_vfs_storage.yaml
+            oc apply -f 05_java_sonarqube_task.yaml
+            oc apply -f 06_VA_scan.yaml
             tkn task list
 
             #3 - setup tekton pipeline 
@@ -58,6 +60,8 @@ do
 
             # 6 - give the default service account the access keys to the registry 
             echo " overwhelming the deployer with irrelevant information (hint: not a best practice)"
+            echo " did you know that the human working  memory has room to hold 4 facts"
+            echo " I might just have pushed out some relevant facts"
             oc secrets link default regcred --for=pull
 
             break
@@ -77,10 +81,6 @@ do
             ;;
         "add sonar scan to pipeline")
 
-            echo "updating pipeline to perform a sonar qube scan"
-            oc apply -f 05_java_sonarqube_task.yaml
-            tkn task list
-
             oc apply -f pipeline-vfs-sonar.yaml
             tkn pipeline list
 
@@ -98,10 +98,6 @@ do
             break
             ;;
        "setup pipeline with push to ICR")
-
-            echo "updating pipeline to perform a VA scan"
-            oc apply -f 06_VA_scan.yaml
-            #tkn task list
 
             # Recreate access token to IBM Container Registry
             oc delete secret regcred 
@@ -124,7 +120,8 @@ do
             tkn resources list
 
             echo "************************ setup Tekton Pipeline with VA scan ******************************************"
-            oc apply -f pipeline-vfs-icr.yaml
+            #oc apply -f pipeline-vfs-icr.yaml
+            oc apply -f pipeline-full.yaml
             tkn pipeline list
 
             oc delete secret ibmcloud-apikey 2>/dev/null
