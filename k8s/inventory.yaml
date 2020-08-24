@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: catalog-lightblue-deployment
+  labels:
+    app: catalog
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: catalog
+  template:
+    metadata:
+      labels:
+        app: catalog
+    spec:
+      containers:
+      - name: catalog-lightblue-deployment
+        image: index.docker.io/rocketronald/lightbluecompute-catalog
+        imagePullPolicy: Always
+        env:
+        - name: MYSQL_ROOT_PASSWORD
+          value: "Pass4Admin123"
+        - name: MYSQL_USER
+          value: "dbuser"
+        - name: MYSQL_PASSWORD
+          value: "Pass4dbUs3R"
+        - name: MYSQL_DATABASE
+          value: "inventorydb"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: catalog-lightblue-service
+  labels:
+    app: catalog
+spec:
+  selector:
+    app: catalog
+  ports:
+   - port: 8081
+     targetPort: 8081
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  labels:
+    app: catalog
+  name: catalog-lightblue-service
+spec:
+  port:
+    targetPort: 8081
+  to:
+    kind: Service
+    name: catalog-lightblue-service
+    weight: 100

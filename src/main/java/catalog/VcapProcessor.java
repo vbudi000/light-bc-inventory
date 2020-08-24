@@ -19,7 +19,7 @@ public class VcapProcessor implements ApplicationContextInitializer<Configurable
         PropertySource<?> yamlTestProperties = sourceLoader.load("yamlTestProperties", resource, null);
         applicationContext.getEnvironment().getPropertySources().addFirst(yamlTestProperties);
         String vcapURI = applicationContext.getEnvironment().getProperty("vcap.uri");
-        System.out.println("TEST: "+vcapURI);
+        System.out.println("vcap.uri from application.yml: "+vcapURI);
         if (vcapURI.startsWith("mysql")) {
             int ustart = vcapURI.indexOf("://")+3;
             String username = vcapURI.substring(ustart,vcapURI.indexOf(":",ustart));
@@ -31,7 +31,20 @@ public class VcapProcessor implements ApplicationContextInitializer<Configurable
             PropertySource<?> newDataSource = sourceLoader.load("newDataSource",bar,null);
             applicationContext.getEnvironment().getPropertySources().addFirst(newDataSource);
             System.out.println("****: "+applicationContext.getEnvironment().getProperty("spring.datasource.url"));
-        }
+        } else {
+            String uri = applicationContext.getEnvironment().getProperty("spring.datasource.url");
+            System.out.println("spring.datasource.url from application.yml: "+uri); 
+            String username = applicationContext.getEnvironment().getProperty("spring.datasource.username");
+            System.out.println("spring.datasource.username from application.yml: "+username);
+            String password = applicationContext.getEnvironment().getProperty("spring.datasource.password");
+            System.out.println("spring.datasource.password from application.yml: "+password); 
+            String ymlSrc = "spring: \n  datasource:\n    username: "+username+"\n    password: "+password+"\n    url: "+uri;
+            System.out.println(ymlSrc);
+            ByteArrayResource bar = new ByteArrayResource(ymlSrc.getBytes());
+            PropertySource<?> newDataSource = sourceLoader.load("newDataSource",bar,null);
+            applicationContext.getEnvironment().getPropertySources().addFirst(newDataSource);
+            System.out.println("****: "+applicationContext.getEnvironment().getProperty("spring.datasource.url"));          
+        }  
     } catch (IOException e) {
         throw new RuntimeException(e);
     }
