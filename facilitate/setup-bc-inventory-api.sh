@@ -60,7 +60,7 @@ do
 
             # 6 - give the default service account the access keys to the registry 
             echo " overwhelming the deployer with irrelevant information (hint: not a best practice)"
-            echo " did you know that the human working  memory has room to hold 4 facts"
+            echo " did you know that the human working memory has room to hold 4 facts"
             echo " I might just have pushed out some relevant facts"
             oc secrets link default regcred --for=pull
 
@@ -80,6 +80,26 @@ do
             break
             ;;
         "add sonar scan to pipeline")
+
+            #1 setup tekton resources
+            echo "************************ setup Tekton PipelineResources ******************************************"
+            cp ../tekton/PipelineResources/bluecompute-inventory-pipeline-resources.yaml ../tekton/PipelineResources/bluecompute-inventory-pipeline-resources.yaml.mod
+            sed -i "s/ibmcase/${DOCKER_USERNAME}/g" ../tekton/PipelineResources/bluecompute-inventory-pipeline-resources.yaml.mod
+            sed -i "s/phemankita/${GIT_USERNAME}/g" ../tekton/PipelineResources/bluecompute-inventory-pipeline-resources.yaml.mod
+            oc apply -f ../tekton/PipelineResources/bluecompute-inventory-pipeline-resources.yaml.mod
+            rm ../tekton/PipelineResources/bluecompute-inventory-pipeline-resources.yaml.mod
+            #oc get PipelineResources
+            tkn resources list
+
+            #4 - recreate access key
+            echo "************************ recreate access key to dockerhub ******************************************"
+            oc delete secret regcred 
+            oc create secret docker-registry regcred \
+            --docker-server=https://index.docker.io/v1/ \
+            --docker-username=${DOCKER_USERNAME} \
+            --docker-password=${DOCKER_PASSWORD} \
+            --docker-email=${DOCKER_EMAIL}
+            #oc get secret regcred            
 
             oc apply -f pipeline-vfs-sonar.yaml
             tkn pipeline list
@@ -119,9 +139,9 @@ do
             #oc get PipelineResources
             tkn resources list
 
-            echo "************************ setup Tekton Pipeline with VA scan ******************************************"
-            #oc apply -f pipeline-vfs-icr.yaml
-            oc apply -f pipeline-full.yaml
+            echo "************************ setup Tekton Pipeline with IBM VA scan ******************************************"
+            oc apply -f pipeline-vfs-icr.yaml
+            #oc apply -f pipeline-full.yaml
             tkn pipeline list
 
             oc delete secret ibmcloud-apikey 2>/dev/null
