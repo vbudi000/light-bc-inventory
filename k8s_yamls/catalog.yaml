@@ -4,6 +4,9 @@ metadata:
   name: catalog-lightblue-deployment
 spec:
   replicas: 1
+  selector:
+    matchLabels:
+      app: catalog
   template:
     metadata:
       name: pod-catalog

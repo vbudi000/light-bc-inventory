@@ -17,5 +17,5 @@ spec:
       value: "k8s_yamls"
     - name: pathToDeployableFile
       value: "k8s_yamls_mcm"
-  serviceAccountName: pipeline-account
+  serviceAccountName: pipeline
   timeout: "1h0m0s"
